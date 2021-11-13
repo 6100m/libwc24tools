@@ -19,12 +19,9 @@ def u32(data):
 
 
 def ParseContainer(type_data, buffer_data, compress_flag, aes_key, iv_key, rsa_key):
-
     compressed_data = _compress(bytes(buffer_data.read()))
     private_key = rsa.PrivateKey.load_pkcs1(rsa_key, "PEM")
-
     signature = rsa.sign(data, private_key, "SHA-1")
-
     if type_data == "enc":
         if iv_key is not None:
             try:
@@ -33,19 +30,15 @@ def ParseContainer(type_data, buffer_data, compress_flag, aes_key, iv_key, rsa_k
                 iv = iv_key.read()
         else:
             iv = os.urandom(16)
-
         try:
             key = unhexlify(aes_key)
         except:
             key = open(aes_key, "rb").read()
-
         aes = AES.new(key, AES.MODE_OFB, iv=iv)
         processed = aes.encrypt(compressed_data)
     elif type_data == "dec":
         processed = compressed_data
-
     content = {}
-
     content["magic"] = b"WC24" if type_data == "enc" else u32(0)
     content["version"] = u32(1) if type_data == "enc" else u32(0)
     content["filler"] = u32(0)
