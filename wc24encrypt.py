@@ -33,8 +33,8 @@ def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
         try:
             key = unhexlify(aes_key)
         except:
-            key = open(aes_key, "rb").read()
-        aes = AES.new(key, AES.MODE_OFB, iv=iv)
+            key = aes_key.read()
+        aes = AES.new(key, AES.MODE_OFB, iv=iv_key)
         processed = aes.encrypt(compressed_data)
     elif type_data == "dec":
         processed = compressed_data
