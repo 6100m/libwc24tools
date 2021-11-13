@@ -3,7 +3,7 @@ import rsa
 import struct
 from binascii import unhexlify
 from Crypto.Cipher import AES
-from nlzss import encode_file
+from NZLSSLib import compress
 
 
 def u8(data):
@@ -18,24 +18,19 @@ def u32(data):
     return struct.pack(">I", data)
 
 
-def ParseContainer(type, data, compress_flag, aes_key, iv_key, rsa_key):
+def ParseContainer(type_data, buffer_data, compress_flag, aes_key, iv_key, rsa_key):
 
-    if compress_flag is not None:
-        encode_file(in_path=args.input[0], out_path="temp")
-        filename = "temp"
-    else:
-        filename = input
-
+    compressed_data = _compress(bytes(buffer_data))
     private_key = rsa.PrivateKey.load_pkcs1(rsa_key, "PEM")
 
     signature = rsa.sign(data, private_key, "SHA-1")
 
-    if args.type[0] == "enc":
-        if args.iv_key is not None:
+    if type_data == "enc":
+        if iv_key is not None:
             try:
                 iv = unhexlify(iv_key)
             except:
-                iv = open(iv_key, "rb").read()
+                iv = iv_key.read()
         else:
             iv = os.urandom(16)
 
@@ -45,24 +40,21 @@ def ParseContainer(type, data, compress_flag, aes_key, iv_key, rsa_key):
             key = open(aes_key, "rb").read()
 
         aes = AES.new(key, AES.MODE_OFB, iv=iv)
-        processed = aes.encrypt(data)
-    elif type == "dec":
-        processed = data
+        processed = aes.encrypt(compressed_data)
+    elif type_data == "dec":
+        processed = compressed_data
 
     content = {}
 
-    content["magic"] = b"WC24" if type == "enc" else u32(0)
-    content["version"] = u32(1) if type == "enc" else u32(0)
+    content["magic"] = b"WC24" if type_data == "enc" else u32(0)
+    content["version"] = u32(1) if type_data == "enc" else u32(0)
     content["filler"] = u32(0)
-    content["crypt_type"] = u8(1) if type == "enc" else u8(0)
+    content["crypt_type"] = u8(1) if type_data == "enc" else u8(0)
     content["pad"] = u8(0) * 3
     content["reserved"] = u8(0) * 32
-    content["iv"] = iv if type == "enc" else u8(0) * 16
+    content["iv"] = iv if type_data == "enc" else u8(0) * 16
     content["signature"] = signature
     content["data"] = processed
-
-    if type == "dec":
-        os.remove("temp")
     output = []
     for values in content.values():
         output.append(values)
