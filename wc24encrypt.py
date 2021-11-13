@@ -1,9 +1,9 @@
-import os
 import rsa
 import struct
 from binascii import unhexlify
 from Crypto.Cipher import AES
 from NZLSSLib import compress
+from os import urandom
 
 
 def u8(data):
@@ -52,7 +52,7 @@ def ParseContainer(type_data, buffer_data, compress_flag, aes_key, iv_key, rsa_k
     for values in content.values():
         output.append(values)
     # Thanks https://www.geeksforgeeks.org/python-convert-dictionary-to-concatenated-string/
-    res = ' '
+    res = " "
     for item in output_dict:
-      res += item + str(output_dict[item])
-    return res
+        res += item + str(output_dict[item])
+    return unhexlify(res)
