@@ -18,7 +18,7 @@ def u32(data):
     return struct.pack(">I", data)
 
 
-def ParseContainer(type, input, output, compress_flag, aes_key, iv_key, rsa_key):
+def ParseContainer(type, data, compress_flag, aes_key, iv_key, rsa_key):
 
     if compress_flag is not None:
         encode_file(in_path=args.input[0], out_path="temp")
@@ -26,18 +26,7 @@ def ParseContainer(type, input, output, compress_flag, aes_key, iv_key, rsa_key)
     else:
         filename = input
 
-    with open(filename, "rb") as f:
-        data = f.read()
-
-    if args.rsa_key_path is not None:
-        rsa_key_path = rsa_key
-    else:
-        rsa_key_path = "Private.pem"
-
-    with open(rsa_key_path, "rb") as source_file:
-        private_key_data = source_file.read()
-
-    private_key = rsa.PrivateKey.load_pkcs1(private_key_data, "PEM")
+    private_key = rsa.PrivateKey.load_pkcs1(rsa_key, "PEM")
 
     signature = rsa.sign(data, private_key, "SHA-1")
 
@@ -46,14 +35,14 @@ def ParseContainer(type, input, output, compress_flag, aes_key, iv_key, rsa_key)
             try:
                 iv = unhexlify(iv_key)
             except:
-                iv = open(args.iv_key, "rb").read()
+                iv = open(iv_key, "rb").read()
         else:
             iv = os.urandom(16)
 
         try:
-            key = unhexlify(args.aes_key)
+            key = unhexlify(aes_key)
         except:
-            key = open(args.aes_key, "rb").read()
+            key = open(aes_key, "rb").read()
 
         aes = AES.new(key, AES.MODE_OFB, iv=iv)
         processed = aes.encrypt(data)
@@ -72,12 +61,8 @@ def ParseContainer(type, input, output, compress_flag, aes_key, iv_key, rsa_key)
     content["signature"] = signature
     content["data"] = processed
 
-    if os.path.exists(output):
-        os.remove(output)
-
     if type == "dec":
         os.remove("temp")
-
+    output = []
     for values in content.values():
-        with open(output, "ab+") as f:
-            f.write(values)
+        output.append(values)
