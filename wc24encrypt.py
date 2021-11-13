@@ -72,7 +72,7 @@ def ParseContainer(type, input, output, compress_flag, aes_key, iv_key, rsa_key)
     content["signature"] = signature
     content["data"] = processed
 
-    if os.path.exists(putput):
+    if os.path.exists(output):
         os.remove(output)
 
     if type == "dec":
