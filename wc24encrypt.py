@@ -38,16 +38,21 @@ def ParseContainer(type_data, buffer_data, compress_flag, aes_key, iv_key, rsa_k
         processed = aes.encrypt(compressed_data)
     elif type_data == "dec":
         processed = compressed_data
-    content = {}
-    content["magic"] = b"WC24" if type_data == "enc" else u32(0)
-    content["version"] = u32(1) if type_data == "enc" else u32(0)
-    content["filler"] = u32(0)
-    content["crypt_type"] = u8(1) if type_data == "enc" else u8(0)
-    content["pad"] = u8(0) * 3
-    content["reserved"] = u8(0) * 32
-    content["iv"] = iv if type_data == "enc" else u8(0) * 16
-    content["signature"] = signature
-    content["data"] = processed
-    output = []
+    content_dict = {}
+    content_dict["magic"] = b"WC24" if type_data == "enc" else u32(0)
+    content_dict["version"] = u32(1) if type_data == "enc" else u32(0)
+    content_dict["filler"] = u32(0)
+    content_dict["crypt_type"] = u8(1) if type_data == "enc" else u8(0)
+    content_dict["pad"] = u8(0) * 3
+    content_dict["reserved"] = u8(0) * 32
+    content_dict["iv"] = iv if type_data == "enc" else u8(0) * 16
+    content_dict["signature"] = signature
+    content_dict["data"] = processed
+    output_dict = []
     for values in content.values():
         output.append(values)
+    # Thanks https://www.geeksforgeeks.org/python-convert-dictionary-to-concatenated-string/
+    res = ' '
+    for item in output_dict:
+      res += item + str(output_dict[item])
+    return res
