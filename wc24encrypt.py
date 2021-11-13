@@ -18,7 +18,7 @@ def u32(data):
     return struct.pack(">I", data)
 
 
-def ParseContainer(type_data, buffer_data, compress_flag, aes_key, iv_key, rsa_key):
+def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
     compressed_data = _compress(bytes(buffer_data.read()))
     private_key = rsa.PrivateKey.load_pkcs1(rsa_key, "PEM")
     signature = rsa.sign(data, private_key, "SHA-1")
