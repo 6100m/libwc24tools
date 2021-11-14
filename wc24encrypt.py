@@ -14,9 +14,9 @@ def u16(val):
 def u32(val):
     return pack(">I", val)
 
-def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
-    compressed_data = _compress(bytes(buffer_data.read()))
-    signature = rsa.sign(compressed_data, rsa_key.read(), "SHA-1")
+def ParseContainer(buffer_data, aes_key, iv_key, rsa_key):
+    lz_data = _compress(bytes(buffer_data.read()))
+    sig = rsa.sign(lz_data.read(), rsa_key.read(), "SHA-1")
     if iv_key is not None:
         try:
             iv = unhexlify(iv_key.read())
@@ -29,8 +29,8 @@ def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
     except:
         key = aes_key.read()
     aes = AES.new(key, AES.MODE_OFB, iv=iv_key)
-    processed = aes.encrypt(compressed_data.read())
-    input_dict = [
+    enc = aes.encrypt(compressed_data.read())
+    inp_dict = [
         b"WC24",
         u32(1),
         u32(0),
@@ -38,12 +38,12 @@ def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
         u8(0) * 3,
         u8(0) * 32,
         iv,
-        signature,
-        processed
+        sig,
+        enc
     ]
     # Thanks https://www.geeksforgeeks.org/python-convert-dictionary-to-concatenated-string/
-    output_dict = []
+    out_dict = []
     res = ' '
-    for values in input_dict:
-        res += item + str(output_dict[values])
+    for data in inp_dict:
+        res += item + str(out_dict[data])
     return unhexlify(res)
