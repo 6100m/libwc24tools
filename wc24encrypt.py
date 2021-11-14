@@ -1,9 +1,9 @@
 from xcrypt import generate4
 from struct import pack
 from binascii import unhexlify
-from Crypto.Cipher import AES
+from Crypto.Cipher.AES import new, encrypt
 from libnlzsstools import compress
-import rsa
+from rsa import sign
 
 def u8(val):
     return pack(">B", val)
@@ -14,14 +14,15 @@ def u16(val):
 def u32(val):
     return pack(">I", val)
 
-def ParseContainer(buffer_data, aes_key, iv_key, rsa_key):
-    lz_data = _compress(bytes(buffer_data.read()))
-    sig = rsa.sign(lz_data.read(), rsa_key.read(), "SHA-1")
+def ParseContainer(buff, aes_key, iv_key, rsa_key):
+    lz_data = _compress(bytes(buff.read()))
+    sig = sign(
+        lz_data.read(), rsa_key.read(), "SHA-1")
     if iv_key is not None:
         try:
-            iv = unhexlify(iv_key.read())
+            iv = unhexlify(iv_key)
         except:
-            iv = iv_key.read()
+            iv = iv_key
     else:
         iv = generate4() * 4
     try:
