@@ -24,7 +24,7 @@ def ParseContainer(buff, aes_key, iv_key, rsa_key):
         except:
             iv = iv_key
     else:
-        iv = generate4() * 4
+        iv = generate25()[:-9]
     try:
         key = unhexlify(aes_key)
     except:
