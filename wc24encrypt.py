@@ -5,11 +5,11 @@ from Crypto.Cipher import AES
 from libnlzsstools import compress
 import rsa
 
-def u8(data):
-    return pack(">B", data)
+def u8(val):
+    return pack(">B", val)
 
-def u16(data):
-    return pack(">H", data)
+def u16(val):
+    return pack(">H", val)
 
 def u32(data):
     return pack(">I", data)
