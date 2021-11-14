@@ -28,9 +28,9 @@ def ParseContainer(buff, aes_key, iv_key, rsa_key):
     try:
         key = unhexlify(aes_key)
     except:
-        key = aes_key.read()
-    aes = AES.new(key, AES.MODE_OFB, iv=iv_key)
-    enc = aes.encrypt(lz.read())
+        key = aes_key
+    aes = new(key, AES.MODE_OFB, iv=iv_key)
+    enc = encrypt(lz.read())
     inp = [
         b"WC24",
         u32(1),
