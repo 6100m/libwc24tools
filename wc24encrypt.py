@@ -3,6 +3,7 @@ from struct import pack
 from binascii import unhexlify
 from Crypto.Cipher import AES
 from libnlzsstools import compress
+import rsa
 
 def u8(data):
     return pack(">B", data)
