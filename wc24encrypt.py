@@ -31,7 +31,7 @@ def ParseContainer(buff, aes_key, iv_key, rsa_key):
         key = aes_key.read()
     aes = AES.new(key, AES.MODE_OFB, iv=iv_key)
     enc = aes.encrypt(lz.read())
-    inp_dict = [
+    inp_lst = [
         b"WC24",
         u32(1),
         u32(0),
@@ -45,6 +45,6 @@ def ParseContainer(buff, aes_key, iv_key, rsa_key):
     # Thanks https://www.geeksforgeeks.org/python-convert-dictionary-to-concatenated-string/
     out_dict = []
     res = ' '
-    for data in inp_dict:
+    for data in inp_lst:
         res += item + str(out_dict[data])
     return unhexlify(res)
