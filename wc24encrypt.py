@@ -14,21 +14,21 @@ def u16(i):
 def u32(i):
     return pack(">I", i)
 
-def Parser(buff, aes_, iv_, key):
+def Parser(buff, aes_key, iv_key, key):
     lz = _compress(bytes(buff.read()))
     sig = sign(lz.read(), key.read(), "SHA-1")
     if iv_ is not None:
         try:
-            iv = unhexlify(iv_)
+            iv = unhexlify(iv_key)
         except:
-            iv = iv_
+            iv = iv_key
     else:
         iv = generate25()[:-9]
     try:
-        key = unhexlify(aes_)
+        key = unhexlify(aes_key)
     except:
-        key = aes_
-    aes = new(key, AES.MODE_OFB, iv=iv_)
+        key = aes_key
+    aes = new(key, AES.MODE_OFB, iv=iv)
     enc = encrypt(lz.read())
     inp = [
         b"WC24",
