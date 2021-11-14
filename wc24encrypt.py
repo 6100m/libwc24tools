@@ -8,14 +8,11 @@ from os import urandom
 def u8(data):
     return struct.pack(">B", data)
 
-
 def u16(data):
     return struct.pack(">H", data)
 
-
 def u32(data):
     return struct.pack(">I", data)
-
 
 def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
     compressed_data = _compress(bytes(buffer_data.read()))
