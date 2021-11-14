@@ -5,7 +5,7 @@ from Crypto.Cipher.AES import new, encrypt
 from libnlzsstools import _compress
 from rsa import sign
 
-def u8(val):
+def u8(i):
     return pack(">B", val)
 
 def u16(val):
