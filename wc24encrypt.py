@@ -30,7 +30,7 @@ def ParseContainer(buff, aes_key, iv_key, rsa_key):
     except:
         key = aes_key.read()
     aes = AES.new(key, AES.MODE_OFB, iv=iv_key)
-    enc = aes.encrypt(compressed_data.read())
+    enc = aes.encrypt(lz.read())
     inp_dict = [
         b"WC24",
         u32(1),
