@@ -2,7 +2,7 @@ from xcrypt import generate4
 from struct import pack
 from binascii import unhexlify
 from Crypto.Cipher.AES import new, encrypt
-from libnlzsstools import compress
+from libnlzsstools import _compress
 from rsa import sign
 
 def u8(val):
