@@ -2,7 +2,7 @@ import rsa
 import struct
 from binascii import unhexlify
 from Crypto.Cipher import AES
-from NZLSSLib import compress
+from libnlzsstools import compress
 from os import urandom
 
 def u8(data):
@@ -31,9 +31,7 @@ def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
         except:
             key = aes_key.read()
         aes = AES.new(key, AES.MODE_OFB, iv=iv_key)
-        processed = aes.encrypt(compressed_data)
-    elif type_data == "dec":
-        processed = compressed_data
+    processed = aes.encrypt(compressed_data)
     content_dict = {}
     content_dict["magic"] = b"WC24" if type_data == "enc" else u32(0)
     content_dict["version"] = u32(1) if type_data == "enc" else u32(0)
@@ -44,11 +42,9 @@ def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
     content_dict["iv"] = iv if type_data == "enc" else u8(0) * 16
     content_dict["signature"] = signature
     content_dict["data"] = processed
-    output_dict = []
-    for values in content.values():
-        output.append(values)
     # Thanks https://www.geeksforgeeks.org/python-convert-dictionary-to-concatenated-string/
+    output_dict = []
     res = ' '
-    for item in output_dict:
-        res += item + str(output_dict[item])
+    for values in content.values():
+        res += item + str(output_dict[values])
     return unhexlify(res)
