@@ -42,7 +42,8 @@ def ParseContainer(buff, aes_key, iv_key, rsa_key):
         sig,
         enc
     ]
-    # Thanks https://www.geeksforgeeks.org/python-convert-dictionary-to-concatenated-string/
+    # Thanks:
+    # https://www.geeksforgeeks.org/python-convert-dictionary-to-concatenated-string/
     out = []
     res = ' '
     for data in inp:
