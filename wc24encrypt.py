@@ -8,8 +8,8 @@ from rsa import sign
 def u8(i):
     return pack(">B", val)
 
-def u16(val):
-    return pack(">H", val)
+def u16(i):
+    return pack(">H", i)
 
 def u32(val):
     return pack(">I", val)
