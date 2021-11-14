@@ -5,6 +5,7 @@ from Crypto.Cipher import AES
 from libnlzsstools import compress
 from os import urandom
 
+
 def u8(data):
     return struct.pack(">B", data)
 
@@ -18,19 +19,18 @@ def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
     compressed_data = _compress(bytes(buffer_data.read()))
     private_key = rsa.PrivateKey.load_pkcs1(rsa_key, "PEM")
     signature = rsa.sign(data, private_key, "SHA-1")
-    if type_data == "enc":
-        if iv_key is not None:
-            try:
-                iv = unhexlify(iv_key)
-            except:
-                iv = iv_key.read()
-        else:
-            iv = os.urandom(16)
+    if iv_key is not None:
         try:
-            key = unhexlify(aes_key)
+            iv = unhexlify(iv_key)
         except:
-            key = aes_key.read()
-        aes = AES.new(key, AES.MODE_OFB, iv=iv_key)
+            iv = iv_key.read()
+    else:
+        iv = os.urandom(16)
+    try:
+        key = unhexlify(aes_key)
+    except:
+        key = aes_key.read()
+    aes = AES.new(key, AES.MODE_OFB, iv=iv_key)
     processed = aes.encrypt(compressed_data)
     content_dict = {}
     content_dict["magic"] = b"WC24" if type_data == "enc" else u32(0)
