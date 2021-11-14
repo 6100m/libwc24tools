@@ -1,3 +1,4 @@
 PyCryptodome
 rsa
 xcrypt
+nlzss_mod
