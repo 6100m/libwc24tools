@@ -11,8 +11,8 @@ def u8(val):
 def u16(val):
     return pack(">H", val)
 
-def u32(data):
-    return pack(">I", data)
+def u32(val):
+    return pack(">I", val)
 
 def ParseContainer(type_data, buffer_data, aes_key, iv_key, rsa_key):
     compressed_data = _compress(bytes(buffer_data.read()))
