@@ -11,7 +11,7 @@ def u8(i):
 def u16(i):
     return pack(">H", i)
 
-def u32(val):
+def u32(i):
     return pack(">I", val)
 
 def ParseContainer(buff, aes_key, iv_key, rsa_key):
