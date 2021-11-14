@@ -5,7 +5,6 @@ from Crypto.Cipher import AES
 from NZLSSLib import compress
 from os import urandom
 
-
 def u8(data):
     return struct.pack(">B", data)
 
