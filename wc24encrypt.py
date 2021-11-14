@@ -1,35 +1,34 @@
-from xcrypt import generate4
+from xcrypt import generate25
 from struct import pack
 from binascii import unhexlify
 from Crypto.Cipher.AES import new, encrypt
-from libnlzsstools import _compress
+from nlzss_mod import _compress
 from rsa import sign
 
 def u8(i):
-    return pack(">B", val)
+    return pack(">B", i)
 
 def u16(i):
     return pack(">H", i)
 
 def u32(i):
-    return pack(">I", val)
+    return pack(">I", i)
 
-def ParseContainer(buff, aes_key, iv_key, rsa_key):
+def Parser(buff, aes_, iv_, key):
     lz = _compress(bytes(buff.read()))
-    sig = sign(
-        lz.read(), rsa_key.read(), "SHA-1")
-    if iv_key is not None:
+    sig = sign(lz.read(), key.read(), "SHA-1")
+    if iv_ is not None:
         try:
-            iv = unhexlify(iv_key)
+            iv = unhexlify(iv_)
         except:
-            iv = iv_key
+            iv = iv_
     else:
         iv = generate25()[:-9]
     try:
-        key = unhexlify(aes_key)
+        key = unhexlify(aes_)
     except:
-        key = aes_key
-    aes = new(key, AES.MODE_OFB, iv=iv_key)
+        key = aes_
+    aes = new(key, AES.MODE_OFB, iv=iv_)
     enc = encrypt(lz.read())
     inp = [
         b"WC24",
@@ -43,9 +42,9 @@ def ParseContainer(buff, aes_key, iv_key, rsa_key):
         enc
     ]
     # Thanks:
-    # https://www.geeksforgeeks.org/python-convert-dictionary-to-concatenated-string/
+    # geeksforgeeks.org/python-convert-dictionary-to-concatenated-string
     out = []
-    res = ' '
+    buf = ' '
     for data in inp:
-        res += item + str(out[data])
-    return unhexlify(res)
+        buf += item + str(out[data])
+    return unhexlify(buf)
