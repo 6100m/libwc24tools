@@ -15,9 +15,9 @@ def u32(val):
     return pack(">I", val)
 
 def ParseContainer(buff, aes_key, iv_key, rsa_key):
-    lz_data = _compress(bytes(buff.read()))
+    lz = _compress(bytes(buff.read()))
     sig = sign(
-        lz_data.read(), rsa_key.read(), "SHA-1")
+        lz.read(), rsa_key.read(), "SHA-1")
     if iv_key is not None:
         try:
             iv = unhexlify(iv_key)
